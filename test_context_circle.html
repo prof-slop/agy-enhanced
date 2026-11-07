@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8">
+  <title>Antigravity Telemetry HUD: Monochromatic Swarm & Circle Testbench</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      /* Native Antigravity Base Palette */
+      --ag-bg-light: #F9F9F9;
+      --ag-fg-light: #101010;
+      --ag-card-light: #FFFFFF;
+      --ag-card-border-light: rgba(0, 0, 0, 0.08);
+      --ag-secondary-light: rgba(0, 0, 0, 0.05);
+      --ag-secondary-fg-light: #4A4A4A;
+      --ag-muted-fg-light: #767676;
+      --ag-quota-green-light: #58983F;
+      --ag-track-light: rgba(0, 0, 0, 0.12);
+      --ag-warning-light: #ac830b;
+      --ag-error-light: #de5555;
+
+      --ag-bg-dark: #101010;
+      --ag-fg-dark: #cccccc;
+      --ag-card-dark: #191919;
+      --ag-card-border-dark: #242424;
+      --ag-secondary-dark: #272727;
+      --ag-secondary-fg-dark: #9d9d9d;
+      --ag-muted-fg-dark: #6e6e6e;
+      --ag-quota-green-dark: #7AAE66;
+      --ag-track-dark: rgba(255, 255, 255, 0.15);
+      --ag-warning-dark: #e8975f;
+      --ag-error-dark: #de5555;
+
+      /* Non-Blue Replacement Palettes for Context & Swarm Telemetry */
+      /* 1. Minimalist Slate & Graphite (Pure Monochrome Restraint - Recommended) */
+      --pal-slate-accent-light: #111827;
+      --pal-slate-metric-light: #4b5563;
+      --pal-slate-branch-light: #374151;
+      --pal-slate-mod-light: #58983f; /* stays graceful quota green */
+
+      --pal-slate-accent-dark: #f3f4f6;
+      --pal-slate-metric-dark: #9ca3af;
+      --pal-slate-branch-dark: #d1d5db;
+      --pal-slate-mod-dark: #7aae66;
+
+      /* 2. Warm Solar Amber (Speed ⚡ & Cache Efficiency) */
+      --pal-amber-accent-light: #b45309;
+      --pal-amber-metric-light: #d97706;
+      --pal-amber-branch-light: #374151;
+      --pal-amber-mod-light: #d97706;
+
+      --pal-amber-accent-dark: #fbbf24;
+      --pal-amber-metric-dark: #f59e0b;
+      --pal-amber-branch-dark: #d1d5db;
+      --pal-amber-mod-dark: #fbbf24;
+
+      /* 3. Sage & Mint Botanical Harmony (Monotonal Green Family) */
+      --pal-sage-accent-light: #2d6a4f;
+      --pal-sage-metric-light: #40916c;
+      --pal-sage-branch-light: #1b4332;
+      --pal-sage-mod-light: #40916c;
+
+      --pal-sage-accent-dark: #7ee787;
+      --pal-sage-metric-dark: #95d5b2;
+      --pal-sage-branch-dark: #b7e4c7;
+      --pal-sage-mod-dark: #7ee787;
+
+      /* 4. Muted Amethyst & Lavender (Modern IDE Studio) */
+      --pal-lavender-accent-light: #6d28d9;
+      --pal-lavender-metric-light: #7c3aed;
+      --pal-lavender-branch-light: #374151;
+      --pal-lavender-mod-light: #7c3aed;
+
+      --pal-lavender-accent-dark: #c4b5fd;
+      --pal-lavender-metric-dark: #a78bfa;
+      --pal-lavender-branch-dark: #d1d5db;
+      --pal-lavender-mod-dark: #c4b5fd;
+
+      /* Monochromatic Swarm Palette: Style 1 (Graphite Glass - Recommended) */
+      --swarm-glass-bg-light: rgba(0, 0, 0, 0.045);
+      --swarm-glass-border-light: rgba(0, 0, 0, 0.10);
+      --swarm-glass-text-light: #374151;
+      --swarm-glass-dot-light: #4b5563;
+
+      --swarm-glass-bg-dark: rgba(255, 255, 255, 0.06);
+      --swarm-glass-border-dark: rgba(255, 255, 255, 0.12);
+      --swarm-glass-text-dark: #d1d5db;
+      --swarm-glass-dot-dark: #e5e7eb;
+
+      /* Monochromatic Swarm Palette: Style 2 (Matte Slate Surface) */
+      --swarm-matte-bg-light: #f3f4f6;
+      --swarm-matte-border-light: #e5e7eb;
+      --swarm-matte-text-light: #1f2937;
+      --swarm-matte-dot-light: #374151;
+
+      --swarm-matte-bg-dark: #262626;
+      --swarm-matte-border-dark: #383838;
+      --swarm-matte-text-dark: #f3f4f6;
+      --swarm-matte-dot-dark: #d1d5db;
+
+      /* Monochromatic Swarm Palette: Style 3 (Minimal Ghost Outline) */
+      --swarm-ghost-bg-light: transparent;
+      --swarm-ghost-border-light: rgba(0, 0, 0, 0.18);
+      --swarm-ghost-text-light: #4b5563;
+      --swarm-ghost-dot-light: #1f2937;
+
+      --swarm-ghost-bg-dark: transparent;
+      --swarm-ghost-border-dark: rgba(255, 255, 255, 0.22);
+      --swarm-ghost-text-dark: #cbd5e1;
+      --swarm-ghost-dot-dark: #ffffff;
+    }
+
+    body.theme-light {
+      background-color: var(--ag-bg-light);
+      color: var(--ag-fg-light);
+      --bg-page: var(--ag-bg-light);
+      --fg-primary: var(--ag-fg-light);
+      --bg-card: var(--ag-card-light);
+      --border-card: var(--ag-card-border-light);
+      --bg-secondary: var(--ag-secondary-light);
+      --fg-secondary: var(--ag-secondary-fg-light);
+      --fg-muted: var(--ag-muted-fg-light);
+      --hud-green: var(--ag-quota-green-light);
+      --hud-track: var(--ag-track-light);
+      --popover-shadow: 0 10px 30px -4px rgba(0, 0, 0, 0.12), 0 4px 10px -2px rgba(0, 0, 0, 0.06);
+
+      /* Active Palette Colors (Default: Minimalist Slate) */
+      --cache-accent: var(--pal-slate-accent-light);
+      --cache-metric: var(--pal-slate-metric-light);
+      --link-accent: var(--pal-slate-branch-light);
+      --swarm-branch-color: var(--pal-slate-branch-light);
+      --mod-color: var(--pal-slate-mod-light);
+
+      /* Active Monochromatic Swarm Styles (Default: Graphite Glass) */
+      --swarm-bg: var(--swarm-glass-bg-light);
+      --swarm-border: var(--swarm-glass-border-light);
+      --swarm-text: var(--swarm-glass-text-light);
+      --swarm-dot: var(--swarm-glass-dot-light);
+      --swarm-badge-bg: rgba(0, 0, 0, 0.06);
+      --swarm-badge-border: rgba(0, 0, 0, 0.12);
+      --swarm-badge-text: #1f2937;
+    }
+
+    body.theme-dark, body.dark, html.dark body {
+      background-color: var(--ag-bg-dark);
+      color: var(--ag-fg-dark);
+      --bg-page: var(--ag-bg-dark);
+      --fg-primary: var(--ag-fg-dark);
+      --bg-card: var(--ag-card-dark);
+      --border-card: var(--ag-card-border-dark);
+      --bg-secondary: var(--ag-secondary-dark);
+      --fg-secondary: var(--ag-secondary-fg-dark);
+      --fg-muted: var(--ag-muted-fg-dark);
+      --hud-green: var(--ag-quota-green-dark);
+      --hud-track: var(--ag-track-dark);
+      --popover-shadow: 0 20px 44px -12px rgba(0, 0, 0, 0.75), 0 3px 10px -2px rgba(0, 0, 0, 0.55);
+
+      /* Active Palette Colors (Default: Minimalist Slate) */
+      --cache-accent: var(--pal-slate-accent-dark);
+      --cache-metric: var(--pal-slate-metric-dark);
+      --link-accent: var(--pal-slate-branch-dark);
+      --swarm-branch-color: var(--pal-slate-branch-dark);
+      --mod-color: var(--pal-slate-mod-dark);
+
+      /* Active Monochromatic Swarm Styles (Default: Graphite Glass) */
+      --swarm-bg: var(--swarm-glass-bg-dark);
+      --swarm-border: var(--swarm-glass-border-dark);
+      --swarm-text: var(--swarm-glass-text-dark);
+      --swarm-dot: var(--swarm-glass-dot-dark);
+      --swarm-badge-bg: rgba(255, 255, 255, 0.08);
+      --swarm-badge-border: rgba(255, 255, 255, 0.16);
+      --swarm-badge-text: #f3f4f6;
+    }
+
+    .trans-theme {
+      transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.35; transform: scale(0.85); }
+    }
+    .status-pulse {
+      animation: pulse-dot 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+  </style>
+</head>
+<body class="theme-light trans-theme min-h-screen p-6 md:p-10 flex flex-col items-center justify-start font-sans">
+  <div class="max-w-4xl w-full space-y-8">
+    
+    <!-- Header with Theme Toggle -->
+    <header class="border-b pb-5 flex flex-col md:flex-row md:items-center justify-between gap-4 trans-theme" style="border-color: var(--border-card);">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider mb-2 trans-theme" style="background-color: var(--bg-secondary); border: 1px solid var(--border-card); color: var(--fg-secondary);">
+          Monochromatic Swarm UI Proposal
+        </div>
+        <h1 class="text-3xl font-extrabold tracking-tight" style="color: var(--fg-primary);">
+          Monochrome Swarm Agent UI & Quota Circle
+        </h1>
+        <p class="text-sm mt-1" style="color: var(--fg-secondary);">
+          Context Circle color remains strictly preserved (Quota Green). Swarm Agent UI adopts a sleek neutral monochrome palette matching both Dark and Light modes.
+        </p>
+      </div>
+
+      <!-- Mode Toggle -->
+      <div class="flex items-center gap-3">
+        <button 
+          id="btn-theme-toggle" 
+          onclick="toggleTheme()" 
+          class="px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 border shadow-sm transition-all"
+          style="background-color: var(--bg-card); color: var(--fg-primary); border-color: var(--border-card);"
+        >
+          <span id="theme-icon">🌙</span>
+          <span id="theme-btn-text">Switch to Dark Theme</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- PROPOSAL 1: NON-BLUE TELEMETRY & CACHE PALETTES -->
+    <section class="p-6 rounded-2xl border shadow-sm space-y-4 trans-theme" style="background-color: var(--bg-card); border-color: var(--border-card);">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b pb-3" style="border-color: var(--border-card);">
+        <div>
+          <h2 class="text-sm font-bold flex items-center gap-2" style="color: var(--fg-primary);">
+            <span class="w-3 h-3 rounded-full" style="background-color: var(--hud-green);"></span>
+            Color Palette Candidates (Zero Blue • Harmonizes with Quota Green)
+          </h2>
+          <p class="text-xs mt-0.5" style="color: var(--fg-muted);">
+            Select a palette below to view non-blue alternatives for Prompt Cache, Swarm drawer, and Context status:
+          </p>
+        </div>
+        <span class="font-mono text-xs px-2.5 py-1 rounded-md" style="background: var(--bg-secondary); color: var(--fg-secondary);">
+          Active: <strong id="active-palette-label" style="color: var(--fg-primary);">1. Minimalist Slate</strong>
+        </span>
+      </div>
+
+      <!-- Palette Candidate Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+        
+        <!-- Palette 1: Minimalist Slate -->
+        <button 
+          onclick="setPalette('slate')" 
+          id="btn-pal-slate"
+          class="p-3.5 rounded-xl border text-left flex flex-col justify-between gap-3 transition-all ring-2 ring-neutral-400 dark:ring-neutral-500" 
+          style="background: var(--bg-secondary); border-color: var(--border-card);"
+        >
+          <div class="flex justify-between items-center w-full">
+            <span class="font-bold text-[11.5px]" style="color: var(--fg-primary);">1. Minimalist Slate</span>
+            <span class="text-[9.5px] px-1.5 py-0.5 rounded font-mono font-semibold" style="background: var(--bg-card); color: var(--fg-primary);">Active</span>
+          </div>
+          <p class="text-[11px]" style="color: var(--fg-muted);">
+            Pure monochrome restraint. Quota Green is the sole chromatic beacon. Cache & tips in crisp slate/platinum.
+          </p>
+          <div class="flex items-center gap-1.5 pt-1 border-t" style="border-color: var(--border-card);">
+            <span class="w-3 h-3 rounded-full bg-slate-800 dark:bg-slate-200 border border-black/10"></span>
+            <span class="w-3 h-3 rounded-full bg-slate-500 dark:bg-slate-400"></span>
+            <span class="w-3 h-3 rounded-full" style="background: var(--hud-green);"></span>
+            <span class="text-[10px] font-mono ml-auto" style="color: var(--fg-muted);">Mono</span>
+          </div>
+        </button>
+
+        <!-- Palette 2: Warm Solar Amber -->
+        <button 
+          onclick="setPalette('amber')" 
+          id="btn-pal-amber"
+          class="p-3.5 rounded-xl border text-left flex flex-col justify-between gap-3 transition-all hover:opacity-90" 
+          style="background: var(--bg-secondary); border-color: var(--border-card);"
+        >
+          <div class="flex justify-between items-center w-full">
+            <span class="font-bold text-[11.5px]" style="color: var(--fg-primary);">2. Solar Amber</span>
+            <span class="text-[9.5px] px-1.5 py-0.5 rounded font-mono font-semibold" style="color: var(--fg-muted);"></span>
+          </div>
+          <p class="text-[11px]" style="color: var(--fg-muted);">
+            Warm energy for Prompt Cache (⚡) & speed savings. Analogous solar warmth next to green; zero blue dissonance.
+          </p>
+          <div class="flex items-center gap-1.5 pt-1 border-t" style="border-color: var(--border-card);">
+            <span class="w-3 h-3 rounded-full bg-amber-600 dark:bg-amber-400"></span>
+            <span class="w-3 h-3 rounded-full bg-amber-500/60 dark:bg-amber-500/80"></span>
+            <span class="w-3 h-3 rounded-full" style="background: var(--hud-green);"></span>
+            <span class="text-[10px] font-mono ml-auto" style="color: var(--fg-muted);">Analogous</span>
+          </div>
+        </button>
+
+        <!-- Palette 3: Sage & Mint Harmony -->
+        <button 
+          onclick="setPalette('sage')" 
+          id="btn-pal-sage"
+          class="p-3.5 rounded-xl border text-left flex flex-col justify-between gap-3 transition-all hover:opacity-90" 
+          style="background: var(--bg-secondary); border-color: var(--border-card);"
+        >
+          <div class="flex justify-between items-center w-full">
+            <span class="font-bold text-[11.5px]" style="color: var(--fg-primary);">3. Sage & Mint</span>
+            <span class="text-[9.5px] px-1.5 py-0.5 rounded font-mono font-semibold" style="color: var(--fg-muted);"></span>
+          </div>
+          <p class="text-[11px]" style="color: var(--fg-muted);">
+            Derived from the green family (deep forest sage to pale mint). 100% natural organic cohesion throughout.
+          </p>
+          <div class="flex items-center gap-1.5 pt-1 border-t" style="border-color: var(--border-card);">
+            <span class="w-3 h-3 rounded-full bg-emerald-700 dark:bg-emerald-400"></span>
+            <span class="w-3 h-3 rounded-full bg-emerald-500/60 dark:bg-emerald-300"></span>
+            <span class="w-3 h-3 rounded-full" style="background: var(--hud-green);"></span>
+            <span class="text-[10px] font-mono ml-auto" style="color: var(--fg-muted);">Monotonal</span>
+          </div>
+        </button>
+
+        <!-- Palette 4: Muted Lavender & Charcoal -->
+        <button 
+          onclick="setPalette('lavender')" 
+          id="btn-pal-lavender"
+          class="p-3.5 rounded-xl border text-left flex flex-col justify-between gap-3 transition-all hover:opacity-90" 
+          style="background: var(--bg-secondary); border-color: var(--border-card);"
+        >
+          <div class="flex justify-between items-center w-full">
+            <span class="font-bold text-[11.5px]" style="color: var(--fg-primary);">4. Muted Lavender</span>
+            <span class="text-[9.5px] px-1.5 py-0.5 rounded font-mono font-semibold" style="color: var(--fg-muted);"></span>
+          </div>
+          <p class="text-[11px]" style="color: var(--fg-muted);">
+            Replaces cyan with sophisticated lilac/amethyst. Modern dark IDE studio aesthetic without blue vibration.
+          </p>
+          <div class="flex items-center gap-1.5 pt-1 border-t" style="border-color: var(--border-card);">
+            <span class="w-3 h-3 rounded-full bg-purple-700 dark:bg-purple-300"></span>
+            <span class="w-3 h-3 rounded-full bg-purple-500/60 dark:bg-purple-400"></span>
+            <span class="w-3 h-3 rounded-full" style="background: var(--hud-green);"></span>
+            <span class="text-[10px] font-mono ml-auto" style="color: var(--fg-muted);">Studio</span>
+          </div>
+        </button>
+
+      </div>
+    </section>
+
+    <!-- PROPOSAL 2: 3 MONOCHROMATIC SWARM VARIATIONS -->
+    <section class="p-6 rounded-2xl border shadow-sm space-y-4 trans-theme" style="background-color: var(--bg-card); border-color: var(--border-card);">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b pb-3" style="border-color: var(--border-card);">
+        <div>
+          <h2 class="text-sm font-bold flex items-center gap-2" style="color: var(--fg-primary);">
+            <span class="w-3 h-3 rounded-full" style="background-color: var(--swarm-dot);"></span>
+            Select Monochromatic Swarm Style Variant
+          </h2>
+          <p class="text-xs mt-0.5" style="color: var(--fg-muted);">
+            Click a variant below to preview the Swarm Pill and Drawer in real time:
+          </p>
+        </div>
+        <span class="font-mono text-xs px-2.5 py-1 rounded-md" style="background: var(--bg-secondary); color: var(--fg-secondary);">
+          Active: <strong id="active-variant-label" style="color: var(--fg-primary);">Style 1: Graphite Glass</strong>
+        </span>
+      </div>
+
+      <!-- Variant Selector Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+        
+        <!-- Option 1: Graphite Glass (Recommended) -->
+        <button 
+          onclick="setSwarmStyle('glass')" 
+          id="btn-style-glass"
+          class="p-3.5 rounded-xl border text-left flex flex-col justify-between gap-3 transition-all ring-2 ring-neutral-400 dark:ring-neutral-500" 
+          style="background: var(--bg-secondary); border-color: var(--border-card);"
+        >
+          <div class="flex justify-between items-center w-full">
+            <span class="font-bold text-[12px]" style="color: var(--fg-primary);">1. Graphite Glass (Recommended)</span>
+            <span class="text-[10px] px-1.5 py-0.5 rounded font-mono font-semibold" style="background: var(--bg-card); color: var(--fg-primary);">Active</span>
+          </div>
+          <p class="text-[11px]" style="color: var(--fg-muted);">
+            Translucent neutral glass with subtle 1px border. Pulsing graphite/silver status dot. Perfectly harmonizes with Antigravity's model selector.
+          </p>
+          <div class="flex items-center gap-2">
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10.5px] font-mono border" style="background: var(--swarm-bg); border-color: var(--swarm-border); color: var(--swarm-text);">
+              <span class="w-1.5 h-1.5 rounded-full status-pulse" style="background: var(--swarm-dot);"></span>
+              <span>Swarm: 1 Agent</span>
+            </div>
+          </div>
+        </button>
+
+        <!-- Option 2: Matte Slate Surface -->
+        <button 
+          onclick="setSwarmStyle('matte')" 
+          id="btn-style-matte"
+          class="p-3.5 rounded-xl border text-left flex flex-col justify-between gap-3 transition-all hover:opacity-90" 
+          style="background: var(--bg-secondary); border-color: var(--border-card);"
+        >
+          <div class="flex justify-between items-center w-full">
+            <span class="font-bold text-[12px]" style="color: var(--fg-primary);">2. Matte Slate Surface</span>
+            <span class="text-[10px] px-1.5 py-0.5 rounded font-mono" style="color: var(--fg-muted);">Opaque</span>
+          </div>
+          <p class="text-[11px]" style="color: var(--fg-muted);">
+            Solid neutral fill (#f3f4f6 light / #262626 dark) with defined contrast edge. Higher visual weight while staying strictly monochromatic.
+          </p>
+          <div class="flex items-center gap-2">
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10.5px] font-mono border" style="background: #f3f4f6; border-color: #e5e7eb; color: #1f2937;">
+              <span class="w-1.5 h-1.5 rounded-full status-pulse" style="background: #374151;"></span>
+              <span>Swarm: 1 Agent</span>
+            </div>
+          </div>
+        </button>
+
+        <!-- Option 3: Minimal Ghost Outline -->
+        <button 
+          onclick="setSwarmStyle('ghost')" 
+          id="btn-style-ghost"
+          class="p-3.5 rounded-xl border text-left flex flex-col justify-between gap-3 transition-all hover:opacity-90" 
+          style="background: var(--bg-secondary); border-color: var(--border-card);"
+        >
+          <div class="flex justify-between items-center w-full">
+            <span class="font-bold text-[12px]" style="color: var(--fg-primary);">3. Minimal Ghost Outline</span>
+            <span class="text-[10px] px-1.5 py-0.5 rounded font-mono" style="color: var(--fg-muted);">Wireframe</span>
+          </div>
+          <p class="text-[11px]" style="color: var(--fg-muted);">
+            Completely transparent body with a crisp neutral hairline border. Zero background tint, maximal negative space.
+          </p>
+          <div class="flex items-center gap-2">
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10.5px] font-mono border" style="background: transparent; border-color: rgba(0,0,0,0.18); color: #4b5563;">
+              <span class="w-1.5 h-1.5 rounded-full status-pulse" style="background: #1f2937;"></span>
+              <span>Swarm: 1 Agent</span>
+            </div>
+          </div>
+        </button>
+
+      </div>
+    </section>
+
+    <!-- LIVE COMPOSER BAR (IN SITU PREVIEW) -->
+    <section class="space-y-3">
+      <div class="flex items-center justify-between">
+        <h3 class="text-xs font-bold uppercase tracking-wider" style="color: var(--fg-secondary);">
+          In-Situ Live Composer: Notice how the Circle Pops alongside Monochromatic Swarm
+        </h3>
+        <span class="text-[11px]" style="color: var(--fg-muted);">
+          Click circle or swarm pill to open popovers
+        </span>
+      </div>
+
+      <!-- Antigravity Chat Input Container -->
+      <div 
+        id="composer-container"
+        class="rounded-[15px] border p-4 shadow-sm space-y-3 relative trans-theme"
+        style="background-color: var(--bg-card); border-color: var(--border-card);"
+      >
+        <!-- Textarea placeholder -->
+        <div class="text-sm select-none pb-4" style="color: var(--fg-muted);">
+          Ask anything, @ to mention, / for actions
+        </div>
+
+        <!-- Prompt Footer Action Bar -->
+        <div class="pt-2 border-t flex items-center justify-between trans-theme" style="border-color: var(--border-card);">
+          
+          <!-- LEFT: Model Selector + Context Circle + Monochromatic Swarm Pill -->
+          <div class="flex items-center gap-2 relative" id="model-selector-group">
+            
+            <!-- Model Selector Button -->
+            <button 
+              class="h-7 px-2.5 rounded-full text-xs font-medium flex items-center gap-1.5 transition select-none outline-none"
+              style="background-color: var(--bg-secondary); color: var(--fg-secondary); border: 1px solid var(--border-card);"
+            >
+              <span class="text-[11px]" style="color: var(--fg-secondary);">✦</span>
+              <span class="font-medium">Gemini 3.8 Flash High</span>
+              <svg class="w-3 h-3 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            <!-- 18PX UNCHANGED CONTEXT CIRCLE (Quota Green) -->
+            <div 
+              id="model-circle-widget" 
+              class="relative cursor-pointer select-none ml-0.5 flex items-center justify-center p-0.5 rounded-full transition-transform hover:scale-110"
+              onclick="toggleMockPopover()"
+              title="Context Window: Click for status"
+            >
+              <svg class="-rotate-90" id="inline-svg" viewBox="0 0 32 32" style="width: 18px; height: 18px;">
+                <!-- Native Depleted Context Track -->
+                <circle id="inline-track" cx="16" cy="16" r="13" fill="none" stroke="var(--hud-track)" stroke-width="3.0" />
+                <!-- Native Meter Stroke (Preserved Quota Green) -->
+                <circle 
+                  id="inline-meter" 
+                  cx="16" 
+                  cy="16" 
+                  r="13" 
+                  fill="none" 
+                  stroke="var(--hud-green)" 
+                  stroke-width="4.0" 
+                  stroke-linecap="butt" 
+                  stroke-dasharray="81.681" 
+                  stroke-dashoffset="0" 
+                  style="transition: stroke-dashoffset 0.4s ease, stroke 0.3s ease;"
+                />
+              </svg>
+
+              <!-- Hover Tooltip -->
+              <div class="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 hidden group-hover:flex flex-col items-center pointer-events-none z-30">
+                <div class="px-2 py-0.5 rounded-md border text-[9.5px] font-mono whitespace-nowrap shadow-lg trans-theme" style="background: var(--bg-card); border-color: var(--border-card); color: var(--fg-primary);">
+                  <span id="tooltip-used" style="color: var(--fg-primary); font-weight: 600;">0</span> <span style="color: var(--fg-muted);">/ 256k (</span><span id="tooltip-pct" style="color: var(--fg-secondary); font-weight: 600;">100% left</span><span style="color: var(--fg-muted);">)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- NEW MONOCHROMATIC SWARM ACTIVITY PILL -->
+            <div 
+              id="swarm-pill-widget"
+              class="group relative flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium cursor-pointer transition select-none hover:scale-105 trans-theme"
+              style="background-color: var(--swarm-bg); border: 1px solid var(--swarm-border); color: var(--swarm-text); height: 20px;"
+              onclick="toggleMockSwarmPopover()"
+              title="Click to view active swarm workspaces"
+            >
+              <span class="w-1.5 h-1.5 rounded-full status-pulse trans-theme" style="background-color: var(--swarm-dot);"></span>
+              <span id="swarm-pill-text">Swarm: 1 Agent</span>
+
+              <!-- Hover Tooltip -->
+              <div class="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 hidden group-hover:flex flex-col items-center pointer-events-none z-30">
+                <div class="px-2.5 py-1 rounded-lg border text-[10px] font-mono whitespace-nowrap shadow-lg trans-theme" style="background: var(--bg-card); border-color: var(--border-card); color: var(--fg-primary);">
+                  feature/hud-telemetry • 1 Worktree Active
+                </div>
+              </div>
+            </div>
+
+            <!-- MONOCHROMATIC SWARM POPUP DRAWER ($ git swarm --status) -->
+            <div 
+              id="mock-swarm-popover"
+              class="absolute bottom-full mb-3 left-48 w-72 rounded-2xl border p-4 z-40 hidden flex-col gap-3 font-mono text-xs trans-theme"
+              style="background-color: var(--bg-card); border-color: var(--border-card); color: var(--fg-primary); box-shadow: var(--popover-shadow);"
+            >
+              <div class="flex items-center justify-between pb-2 border-b" style="border-color: var(--border-card);">
+                <span class="font-bold text-[11px]">$ git swarm --status</span>
+                <span id="swarm-badge-pill" class="text-[9.5px] uppercase font-bold px-2 py-0.5 rounded-full trans-theme" style="background: var(--swarm-badge-bg); color: var(--swarm-badge-text); border: 1px solid var(--swarm-badge-border);">
+                  ● ACTIVE
+                </span>
+              </div>
+              <div class="space-y-1.5 text-[10.5px]">
+                <div class="flex justify-between" style="color: var(--fg-muted);">
+                  <span>Branch:</span>
+                  <span id="mock-swarm-branch" style="color: var(--swarm-branch-color); font-weight: 600;">feature/hud-telemetry</span>
+                </div>
+                <div class="flex justify-between" style="color: var(--fg-muted);">
+                  <span>Worktrees:</span>
+                  <span style="color: var(--fg-primary);">1 Active (hud-telemetry)</span>
+                </div>
+              </div>
+              <div class="pt-2 border-t space-y-1.5" style="border-color: var(--border-card);">
+                <span class="text-[9px] font-bold uppercase tracking-wider block" style="color: var(--fg-muted);">Active Swarm Workspaces</span>
+                <div class="flex items-center justify-between p-2 rounded-lg border text-[10px]" style="background: var(--bg-secondary); border-color: var(--border-card);">
+                  <span style="color: var(--fg-primary); font-weight: 600;">● hud-telemetry</span>
+                  <span style="color: var(--fg-muted);">feature/hud-telemetry</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- CONTEXT STATUS POPOVER ($ context --status) -->
+            <div 
+              id="mock-popover" 
+              class="absolute bottom-full mb-3 left-28 w-72 rounded-2xl border p-4 z-40 hidden flex-col gap-3 font-mono text-xs trans-theme"
+              style="background-color: var(--bg-card); border-color: var(--border-card); color: var(--fg-primary); box-shadow: var(--popover-shadow);"
+            >
+              <div class="flex items-center justify-between pb-2 border-b" style="border-color: var(--border-card);">
+                <span class="font-bold text-[11px]">$ context --status</span>
+                <div class="inline-flex items-center rounded border p-0.5 text-[9px]" style="background-color: var(--bg-secondary); border-color: var(--border-card);">
+                  <button id="mock-btn-context" class="px-2 py-0.5 rounded font-semibold transition-colors" style="background: var(--border-card); color: var(--fg-primary);">Context</button>
+                  <button id="mock-btn-5h" class="px-2 py-0.5 rounded transition-colors" style="color: var(--fg-muted);">5h Quota</button>
+                </div>
+              </div>
+
+              <div class="space-y-1">
+                <div class="flex justify-between text-[11px]">
+                  <span id="popover-capacity-label" style="color: var(--fg-muted);">Capacity</span>
+                  <span id="popover-rem-pct" class="font-bold" style="color: var(--hud-green);">100.0% remaining</span>
+                </div>
+                <div class="w-full h-1.5 rounded-full overflow-hidden" style="background: var(--bg-secondary);">
+                  <div id="popover-bar" class="h-full rounded-full transition-all duration-300" style="width: 100%; background-color: var(--hud-green);"></div>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2 text-[10px]">
+                <div class="p-2 rounded-lg border" style="background: var(--bg-secondary); border-color: var(--border-card);">
+                  <span class="block text-[8.5px] uppercase" style="color: var(--fg-muted);">Used Tokens</span>
+                  <span id="popover-used-tok" class="font-bold" style="color: var(--fg-primary);">0</span>
+                </div>
+                <div class="p-2 rounded-lg border" style="background: var(--bg-secondary); border-color: var(--border-card);">
+                  <span class="block text-[8.5px] uppercase" style="color: var(--fg-muted);">Context Limit</span>
+                  <span class="font-bold" style="color: var(--fg-primary);">1,048,576</span>
+                </div>
+              </div>
+
+              <!-- Model Quotas Card (5h & Weekly Limits) -->
+              <div class="p-2.5 rounded-xl border space-y-1.5" style="background: var(--bg-secondary); border-color: var(--border-card);">
+                <div class="flex justify-between items-center text-[10px]">
+                  <span id="popover-model-name" style="color: var(--fg-muted);">Gemini 3.8 Flash</span>
+                  <span id="popover-quota-badge" class="font-bold" style="color: var(--cache-accent);">● ACTIVE</span>
+                </div>
+                <div class="space-y-1 text-[9px] pt-1.5 border-t" style="border-color: var(--border-card); color: var(--fg-muted);">
+                  <div class="flex justify-between">
+                    <span>5h Limit:</span>
+                    <span id="popover-5h-limit" class="font-semibold" style="color: var(--fg-primary);">1% used (99% left • 4h 49m)</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>Weekly Limit:</span>
+                    <span id="popover-weekly-limit" class="font-semibold" style="color: var(--cache-metric);">28% used (72% left • 6d 8h)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- RIGHT: Action buttons -->
+          <div class="flex items-center gap-2">
+            <span class="text-xs" style="color: var(--fg-muted);">Turbo</span>
+            <div class="w-7 h-7 rounded-full flex items-center justify-center border" style="background: var(--bg-secondary); border-color: var(--border-card); color: var(--fg-secondary);">
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 100-6 3 3 0 000 6z"/></svg>
+            </div>
+            <div class="w-7 h-7 rounded-full flex items-center justify-center" style="background: var(--fg-primary); color: var(--bg-page);">
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Depletion Test Slider -->
+    <section class="p-6 rounded-2xl border space-y-4 trans-theme" style="background-color: var(--bg-card); border-color: var(--border-card);">
+      <div class="flex justify-between items-center">
+        <div>
+          <h2 class="text-sm font-bold flex items-center gap-2" style="color: var(--fg-primary);">
+            <span class="w-2.5 h-2.5 rounded-full" style="background-color: var(--hud-green);"></span>
+            Test Depletion Dynamics (0% Full &rarr; 100% Depleted)
+          </h2>
+          <p class="text-xs mt-0.5" style="color: var(--fg-muted);">Observe smooth stroke depletion while the monochromatic swarm pill stays calm and neutral:</p>
+        </div>
+        <span id="slider-readout" class="font-mono text-xs font-bold" style="color: var(--hud-green);">0% Used • 100% Full</span>
+      </div>
+
+      <input 
+        type="range" 
+        id="depletion-slider" 
+        min="0" 
+        max="100" 
+        value="0" 
+        class="w-full h-2 rounded-lg appearance-none cursor-pointer"
+        style="background: var(--bg-secondary); accent-color: var(--hud-green);"
+        oninput="updateAllMeters(this.value)"
+      >
+
+      <div class="flex flex-wrap gap-2 justify-between items-center text-xs font-mono">
+        <button onclick="setVal(0)" class="px-2.5 py-1 rounded-lg border font-medium transition" style="background: var(--bg-secondary); border-color: var(--border-card); color: var(--fg-primary);">
+          0% (Full Circle)
+        </button>
+        <button onclick="setVal(25)" class="px-2.5 py-1 rounded-lg border font-medium transition" style="background: var(--bg-secondary); border-color: var(--border-card); color: var(--fg-primary);">
+          25% (75% Left)
+        </button>
+        <button onclick="setVal(50)" class="px-2.5 py-1 rounded-lg border font-medium transition" style="background: var(--bg-secondary); border-color: var(--border-card); color: var(--fg-primary);">
+          50% (Half Full)
+        </button>
+        <button onclick="setVal(80)" class="px-2.5 py-1 rounded-lg border font-medium transition" style="background: var(--bg-secondary); border-color: var(--border-card); color: var(--fg-primary);">
+          80% (Warning)
+        </button>
+        <button onclick="setVal(95)" class="px-2.5 py-1 rounded-lg border font-medium transition" style="background: var(--bg-secondary); border-color: var(--border-card); color: var(--fg-primary);">
+          95% (Critical)
+        </button>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    const C_INLINE = 81.681; // 2 * PI * 13
+    let currentTheme = 'light';
+    let currentSwarmStyle = 'glass'; // 'glass', 'matte', 'ghost'
+    let currentPalette = 'slate';    // 'slate', 'amber', 'sage', 'lavender'
+    let popoverOpen = false;
+    let mockCircleMode = 'context';
+
+    const mockBtnContext = document.getElementById('mock-btn-context');
+    const mockBtn5h = document.getElementById('mock-btn-5h');
+    const popoverCapacityLabel = document.getElementById('popover-capacity-label');
+
+    function setMockCircleMode(mode) {
+      mockCircleMode = mode;
+      if (mode === '5h') {
+        if (mockBtn5h) {
+          mockBtn5h.style.background = 'var(--border-card)';
+          mockBtn5h.style.color = 'var(--fg-primary)';
+          mockBtn5h.classList.add('font-semibold');
+        }
+        if (mockBtnContext) {
+          mockBtnContext.style.background = 'transparent';
+          mockBtnContext.style.color = 'var(--fg-muted)';
+          mockBtnContext.classList.remove('font-semibold');
+        }
+        if (popoverCapacityLabel) popoverCapacityLabel.textContent = 'Usage';
+        const remEl = document.getElementById('popover-rem-pct');
+        if (remEl) remEl.textContent = '99.0% remaining';
+        const barEl = document.getElementById('popover-bar');
+        if (barEl) barEl.style.width = '99%';
+      } else {
+        if (mockBtnContext) {
+          mockBtnContext.style.background = 'var(--border-card)';
+          mockBtnContext.style.color = 'var(--fg-primary)';
+          mockBtnContext.classList.add('font-semibold');
+        }
+        if (mockBtn5h) {
+          mockBtn5h.style.background = 'transparent';
+          mockBtn5h.style.color = 'var(--fg-muted)';
+          mockBtn5h.classList.remove('font-semibold');
+        }
+        if (popoverCapacityLabel) popoverCapacityLabel.textContent = 'Capacity';
+        const u = parseFloat(document.getElementById('depletion-slider').value) || 0;
+        updateAllMeters(u);
+      }
+    }
+
+    if (mockBtnContext) mockBtnContext.addEventListener('click', () => setMockCircleMode('context'));
+    if (mockBtn5h) mockBtn5h.addEventListener('click', () => setMockCircleMode('5h'));
+    let swarmPopoverOpen = false;
+
+    const PALETTES = {
+      slate: {
+        label: '1. Minimalist Slate (Pure Monochrome)',
+        light: {
+          accent: '#111827',
+          metric: '#4b5563',
+          link: '#1f2937',
+          branch: '#374151',
+          mod: '#58983f', // Stays graceful Quota Green
+          badgeText: 'Healthy'
+        },
+        dark: {
+          accent: '#f3f4f6',
+          metric: '#9ca3af',
+          link: '#e5e7eb',
+          branch: '#d1d5db',
+          mod: '#7aae66',
+          badgeText: 'Healthy'
+        }
+      },
+      amber: {
+        label: '2. Solar Amber (Speed ⚡ & Energy)',
+        light: {
+          accent: '#b45309',
+          metric: '#d97706',
+          link: '#b45309',
+          branch: '#374151',
+          mod: '#d97706',
+          badgeText: 'Moderate'
+        },
+        dark: {
+          accent: '#fbbf24',
+          metric: '#f59e0b',
+          link: '#fbbf24',
+          branch: '#d1d5db',
+          mod: '#fbbf24',
+          badgeText: 'Moderate'
+        }
+      },
+      sage: {
+        label: '3. Sage & Mint (Botanical Harmony)',
+        light: {
+          accent: '#2d6a4f',
+          metric: '#40916c',
+          link: '#1b4332',
+          branch: '#2d6a4f',
+          mod: '#40916c',
+          badgeText: 'Moderate'
+        },
+        dark: {
+          accent: '#7ee787',
+          metric: '#95d5b2',
+          link: '#a7f3d0',
+          branch: '#7ee787',
+          mod: '#7ee787',
+          badgeText: 'Moderate'
+        }
+      },
+      lavender: {
+        label: '4. Muted Lavender (Modern Studio)',
+        light: {
+          accent: '#6d28d9',
+          metric: '#7c3aed',
+          link: '#6d28d9',
+          branch: '#374151',
+          mod: '#7c3aed',
+          badgeText: 'Moderate'
+        },
+        dark: {
+          accent: '#c4b5fd',
+          metric: '#a78bfa',
+          link: '#c4b5fd',
+          branch: '#d1d5db',
+          mod: '#a78bfa',
+          badgeText: 'Moderate'
+        }
+      }
+    };
+
+    function applyPaletteVariables() {
+      const isDark = currentTheme === 'dark';
+      const pal = PALETTES[currentPalette][isDark ? 'dark' : 'light'];
+
+      document.body.style.setProperty('--cache-accent', pal.accent);
+      document.body.style.setProperty('--cache-metric', pal.metric);
+      document.body.style.setProperty('--link-accent', pal.link);
+      document.body.style.setProperty('--swarm-branch-color', pal.branch);
+      document.body.style.setProperty('--mod-color', pal.mod);
+
+      const branchEl = document.getElementById('mock-swarm-branch');
+      if (branchEl) branchEl.style.color = pal.branch;
+
+      const cacheRateEl = document.getElementById('popover-cache-rate');
+      if (cacheRateEl) cacheRateEl.style.color = pal.accent;
+
+      const cachedTokEl = document.getElementById('popover-cached-tok');
+      if (cachedTokEl) cachedTokEl.style.color = pal.metric;
+    }
+
+    function setPalette(palName) {
+      currentPalette = palName;
+      applyPaletteVariables();
+
+      const palCards = {
+        slate: document.getElementById('btn-pal-slate'),
+        amber: document.getElementById('btn-pal-amber'),
+        sage: document.getElementById('btn-pal-sage'),
+        lavender: document.getElementById('btn-pal-lavender')
+      };
+
+      for (const k of Object.keys(palCards)) {
+        if (!palCards[k]) continue;
+        if (k === palName) {
+          palCards[k].classList.add('ring-2', 'ring-neutral-400', 'dark:ring-neutral-500');
+          const badge = palCards[k].querySelector('div > span:last-child');
+          if (badge) {
+            badge.textContent = 'Active';
+            badge.style.color = 'var(--fg-primary)';
+          }
+        } else {
+          palCards[k].classList.remove('ring-2', 'ring-neutral-400', 'dark:ring-neutral-500');
+          const badge = palCards[k].querySelector('div > span:last-child');
+          if (badge) badge.textContent = '';
+        }
+      }
+
+      document.getElementById('active-palette-label').textContent = PALETTES[palName].label;
+      updateAllMeters(document.getElementById('depletion-slider').value);
+    }
+
+    function applySwarmStyleVariables() {
+      const isDark = currentTheme === 'dark';
+
+      let bg, border, text, dot, badgeBg, badgeBorder, badgeText;
+
+      if (currentSwarmStyle === 'glass') {
+        bg = isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.045)';
+        border = isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.10)';
+        text = isDark ? '#d1d5db' : '#374151';
+        dot = isDark ? '#e5e7eb' : '#4b5563';
+        badgeBg = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)';
+        badgeBorder = isDark ? 'rgba(255, 255, 255, 0.16)' : 'rgba(0, 0, 0, 0.12)';
+        badgeText = isDark ? '#f3f4f6' : '#1f2937';
+      } else if (currentSwarmStyle === 'matte') {
+        bg = isDark ? '#262626' : '#f3f4f6';
+        border = isDark ? '#383838' : '#e5e7eb';
+        text = isDark ? '#f3f4f6' : '#1f2937';
+        dot = isDark ? '#d1d5db' : '#374151';
+        badgeBg = isDark ? '#333333' : '#e5e7eb';
+        badgeBorder = isDark ? '#444444' : '#d1d5db';
+        badgeText = isDark ? '#f9fafb' : '#111827';
+      } else if (currentSwarmStyle === 'ghost') {
+        bg = 'transparent';
+        border = isDark ? 'rgba(255, 255, 255, 0.22)' : 'rgba(0, 0, 0, 0.18)';
+        text = isDark ? '#cbd5e1' : '#4b5563';
+        dot = isDark ? '#ffffff' : '#1f2937';
+        badgeBg = 'transparent';
+        badgeBorder = isDark ? 'rgba(255, 255, 255, 0.25)' : 'rgba(0, 0, 0, 0.20)';
+        badgeText = isDark ? '#f3f4f6' : '#111827';
+      }
+
+      document.body.style.setProperty('--swarm-bg', bg);
+      document.body.style.setProperty('--swarm-border', border);
+      document.body.style.setProperty('--swarm-text', text);
+      document.body.style.setProperty('--swarm-dot', dot);
+      document.body.style.setProperty('--swarm-badge-bg', badgeBg);
+      document.body.style.setProperty('--swarm-badge-border', badgeBorder);
+      document.body.style.setProperty('--swarm-badge-text', badgeText);
+    }
+
+    function setSwarmStyle(styleName) {
+      currentSwarmStyle = styleName;
+      applySwarmStyleVariables();
+
+      const cards = {
+        glass: document.getElementById('btn-style-glass'),
+        matte: document.getElementById('btn-style-matte'),
+        ghost: document.getElementById('btn-style-ghost')
+      };
+
+      const labels = {
+        glass: 'Style 1: Graphite Glass (Recommended)',
+        matte: 'Style 2: Matte Slate Surface',
+        ghost: 'Style 3: Minimal Ghost Outline'
+      };
+
+      for (const k of Object.keys(cards)) {
+        if (!cards[k]) continue;
+        if (k === styleName) {
+          cards[k].classList.add('ring-2', 'ring-neutral-400', 'dark:ring-neutral-500');
+          cards[k].querySelector('span:last-child').textContent = 'Active';
+          cards[k].querySelector('span:last-child').style.color = 'var(--fg-primary)';
+        } else {
+          cards[k].classList.remove('ring-2', 'ring-neutral-400', 'dark:ring-neutral-500');
+          cards[k].querySelector('span:last-child').textContent = '';
+        }
+      }
+
+      document.getElementById('active-variant-label').textContent = labels[styleName];
+    }
+
+    function toggleTheme(forceTheme) {
+      const body = document.body;
+      const btn = document.getElementById('theme-btn-text');
+      const icon = document.getElementById('theme-icon');
+
+      if (forceTheme === 'dark' || (forceTheme === undefined && currentTheme === 'light')) {
+        currentTheme = 'dark';
+        body.classList.remove('theme-light');
+        body.classList.add('theme-dark', 'dark');
+        document.documentElement.classList.add('dark');
+        btn.textContent = 'Switch to Light Theme';
+        icon.textContent = '☀️';
+      } else {
+        currentTheme = 'light';
+        body.classList.remove('theme-dark', 'dark');
+        document.documentElement.classList.remove('dark');
+        body.classList.add('theme-light');
+        btn.textContent = 'Switch to Dark Theme';
+        icon.textContent = '🌙';
+      }
+      applyPaletteVariables();
+      applySwarmStyleVariables();
+      updateAllMeters(document.getElementById('depletion-slider').value);
+    }
+
+    function updateAllMeters(usedPct) {
+      const u = parseInt(usedPct, 10);
+      const remainingPct = 100 - u;
+      const meter = document.getElementById('inline-meter');
+      const sliderReadout = document.getElementById('slider-readout');
+
+      // Rule: Full (0 offset) at 0% used, Empty (C_INLINE offset) at 100% used
+      const offset = (C_INLINE * (u / 100)).toFixed(2);
+      meter.style.strokeDashoffset = offset;
+
+      sliderReadout.textContent = `${u}% Used • ${remainingPct}% Full`;
+
+      const maxTok = 262144; // 256k tokens (auto-compaction boundary)
+      const usedTok = Math.round(maxTok * (u / 100));
+
+      document.getElementById('tooltip-used').textContent = usedTok.toLocaleString();
+      document.getElementById('tooltip-pct').textContent = `${remainingPct}% left`;
+
+      if (mockCircleMode === 'context') {
+        document.getElementById('popover-rem-pct').textContent = `${remainingPct.toFixed(1)}% remaining`;
+        document.getElementById('popover-bar').style.width = `${remainingPct}%`;
+      }
+      document.getElementById('popover-used-tok').textContent = usedTok.toLocaleString();
+
+      // Determine threshold colors based on Antigravity's native semantic tokens (ZERO BLUE)
+      let color = currentTheme === 'dark' ? '#7aae66' : '#58983f'; // Antigravity Native Quota Green
+      let badgeText = 'Healthy';
+
+      if (remainingPct >= 50) {
+        color = currentTheme === 'dark' ? '#7aae66' : '#58983f';
+        badgeText = 'Healthy';
+      } else if (remainingPct >= 20) {
+        color = currentTheme === 'dark' ? '#e8975f' : '#ac830b'; // Antigravity Warning Amber
+        badgeText = 'Warning';
+      } else {
+        color = '#de5555'; // Antigravity Critical Red
+        badgeText = 'Critical';
+      }
+
+      meter.style.stroke = color;
+
+      const badge = document.getElementById('popover-badge');
+      badge.textContent = badgeText;
+      badge.style.color = color;
+      badge.style.borderColor = color + '40';
+      badge.style.backgroundColor = color + '18';
+
+      document.getElementById('popover-bar').style.backgroundColor = color;
+      document.getElementById('popover-rem-pct').style.color = color;
+      sliderReadout.style.color = color;
+
+      // Update Cache Economics Breakdown
+      const cached = Math.round(usedTok * 0.684);
+      const input = usedTok - cached;
+      const output = Math.round(usedTok * 0.08);
+      const cacheRate = usedTok > 0 ? ((cached / usedTok) * 100).toFixed(1) : '0.0';
+
+      const cacheRateEl = document.getElementById('popover-cache-rate');
+      if (cacheRateEl) cacheRateEl.textContent = `⚡ ${cacheRate}% Cached`;
+      const cachedTokEl = document.getElementById('popover-cached-tok');
+      if (cachedTokEl) cachedTokEl.textContent = cached > 1000 ? (cached / 1000).toFixed(1) + 'k' : cached;
+      const inputTokEl = document.getElementById('popover-input-tok');
+      if (inputTokEl) inputTokEl.textContent = input > 1000 ? (input / 1000).toFixed(1) + 'k' : input;
+      const outputTokEl = document.getElementById('popover-output-tok');
+      if (outputTokEl) outputTokEl.textContent = output > 1000 ? (output / 1000).toFixed(1) + 'k' : output;
+    }
+
+    function setVal(pct) {
+      document.getElementById('depletion-slider').value = pct;
+      updateAllMeters(pct);
+    }
+
+    function toggleMockPopover() {
+      popoverOpen = !popoverOpen;
+      const el = document.getElementById('mock-popover');
+      el.style.display = popoverOpen ? 'flex' : 'none';
+      if (popoverOpen) {
+        swarmPopoverOpen = false;
+        const sw = document.getElementById('mock-swarm-popover');
+        if (sw) sw.style.display = 'none';
+      }
+    }
+
+    function toggleMockSwarmPopover() {
+      swarmPopoverOpen = !swarmPopoverOpen;
+      const el = document.getElementById('mock-swarm-popover');
+      if (el) el.style.display = swarmPopoverOpen ? 'flex' : 'none';
+      if (swarmPopoverOpen) {
+        popoverOpen = false;
+        const pop = document.getElementById('mock-popover');
+        if (pop) pop.style.display = 'none';
+      }
+    }
+
+    // Initialize theme, palette, and meter
+    if (document.documentElement.classList.contains('dark') || 
+        document.body.classList.contains('dark') || 
+        document.body.classList.contains('theme-dark')) {
+      toggleTheme('dark');
+    } else {
+      applyPaletteVariables();
+      applySwarmStyleVariables();
+      updateAllMeters(0);
+    }
+  </script>
+</body>
+</html>

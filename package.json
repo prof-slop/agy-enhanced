@@ -1,0 +1,31 @@
+{
+  "name": "antigravity-customizer",
+  "version": "1.0.0",
+  "description": "Custom patches and tooling for Google Antigravity on macOS",
+  "type": "module",
+  "scripts": {
+    "patch": "node scripts/patch_antigravity.mjs apply",
+    "patch:revert": "node scripts/patch_antigravity.mjs revert",
+    "patch:status": "node scripts/patch_antigravity.mjs status",
+    "skills:sync": "node scripts/patch_antigravity.mjs skills",
+    "ast": "node scripts/ast_query.mjs",
+    "test:hud": "open test_context_circle.html",
+    "docs:check": "node scripts/doc_manager.mjs check",
+    "docs:index": "node scripts/doc_manager.mjs index",
+    "docs:new": "node scripts/doc_manager.mjs new",
+    "docs:resolve": "node scripts/doc_manager.mjs resolve",
+    "docs:whoami": "node scripts/doc_manager.mjs whoami",
+    "docs:status": "node scripts/doc_manager.mjs status",
+    "docs:worktree": "node scripts/doc_manager.mjs worktree-init",
+    "docs:task": "node scripts/doc_manager.mjs task",
+    "test": "node scripts/tests/harness_test_suite.mjs",
+    "visual:snapshot": "node scripts/visual_snapshot.mjs",
+    "context:budget": "node scripts/context_budget.mjs",
+    "worktree:create": "node scripts/worktree_manager.mjs create",
+    "worktree:list": "node scripts/worktree_manager.mjs list",
+    "worktree:cleanup": "node scripts/worktree_manager.mjs cleanup"
+  },
+  "devDependencies": {
+    "@electron/asar": "^3.2.14"
+  }
+}

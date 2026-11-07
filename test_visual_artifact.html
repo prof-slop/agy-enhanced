@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Antigravity Visual Artifact Test</title>
+  <!-- 1. External CDN Scripts (previously blocked by CSP script-src) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- 2. External CDN Styles (previously blocked by CSP style-src) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 p-6">
+  <div class="max-w-4xl mx-auto space-y-6">
+    <header class="border-b border-slate-700 pb-4">
+      <h1 class="text-2xl font-bold text-sky-400">Antigravity Patch Verification Suite</h1>
+      <p class="text-sm text-slate-400">Verifying CSP removal, CDN scripts, remote media, and 3rd-party connectivity.</p>
+    </header>
+
+    <!-- Test 1: Interactive Chart from CDN -->
+    <section class="bg-slate-800 p-4 rounded-xl border border-slate-700">
+      <h2 class="text-lg font-semibold text-emerald-400 mb-2">1. External CDN Script (Chart.js)</h2>
+      <div class="h-64">
+        <canvas id="myChart"></canvas>
+      </div>
+    </section>
+
+    <!-- Test 2: Remote Media and Images -->
+    <section class="bg-slate-800 p-4 rounded-xl border border-slate-700 grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <h2 class="text-lg font-semibold text-amber-400 mb-2">2. Remote HTTPS Image</h2>
+        <img 
+          src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80" 
+          alt="Abstract 3D Art" 
+          class="rounded-lg w-full h-48 object-cover border border-slate-600 shadow"
+        />
+      </div>
+      <div>
+        <h2 class="text-lg font-semibold text-purple-400 mb-2">3. Remote Video Streaming</h2>
+        <video 
+          controls 
+          class="rounded-lg w-full h-48 object-cover border border-slate-600 bg-black"
+          poster="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80"
+        >
+          <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" type="video/mp4">
+          Your browser does not support video playback.
+        </video>
+      </div>
+    </section>
+
+    <!-- Test 3: Third Party API Connectivity -->
+    <section class="bg-slate-800 p-4 rounded-xl border border-slate-700">
+      <h2 class="text-lg font-semibold text-indigo-400 mb-2">4. 3rd-Party API Connectivity (fetch test)</h2>
+      <div id="fetch-status" class="p-3 bg-slate-900 rounded font-mono text-sm text-slate-300">
+        Initiating fetch to external API...
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // 1. Render Chart.js
+    try {
+      const ctx = document.getElementById('myChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          datasets: [{
+            label: 'Network Throughput (MB/s)',
+            data: [65, 59, 80, 81, 96, 125, 140],
+            borderColor: '#38bdf8',
+            backgroundColor: 'rgba(56, 189, 248, 0.15)',
+            fill: true,
+            tension: 0.35
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { labels: { color: '#94a3b8' } }
+          },
+          scales: {
+            x: { ticks: { color: '#94a3b8' }, grid: { color: '#334155' } },
+            y: { ticks: { color: '#94a3b8' }, grid: { color: '#334155' } }
+          }
+        }
+      });
+    } catch (e) {
+      console.error('Chart.js initialization failed:', e);
+    }
+
+    // 2. Test 3rd-party fetch
+    fetch('https://api.github.com/zen')
+      .then(res => res.text())
+      .then(zen => {
+        document.getElementById('fetch-status').innerHTML = 
+          '<span class="text-emerald-400 font-bold">✓ Fetch Successful:</span> "' + zen + '"';
+      })
+      .catch(err => {
+        document.getElementById('fetch-status').innerHTML = 
+          '<span class="text-rose-400 font-bold">✗ Fetch Blocked:</span> ' + err.message;
+      });
+  </script>
+</body>
+</html>
